@@ -1,6 +1,7 @@
 from typing import List, Callable
 class Group:
-    def __init__(self, nick : str, id : str):
+    def __init__(self, client : Client, nick : str, id : str):
+        self.client = client
         self.nick = nick
         self.id = id
         self._message_callbacks : List[Callable[[User, Message], None]] = []
@@ -14,11 +15,22 @@ class Group:
     @property
     def alive(self) -> bool:
         return False
-    
 class User:
-    def __init__(self, nick : str, id : str):
+    def __init__(self, client : Client, nick : str, id : str):
+        self.client = client
         self.nick = nick
         self.id = id
+        self._message_callbacks : List[Callable[[Message], None]] = []
+    def on_message(self):
+        def do_register(func : Callable[[Message], None]) -> None:
+            self._message_callbacks.append(func)
+        return do_register
+    def _do_on_message(self, message : Message) -> None:
+        for callback in self._message_callbacks:
+            callback(sender, message)
+    @property
+    def alive(self) -> bool:
+        return False
 class Message:
     def __init__(self, message : str):
         self.message : str = message
@@ -48,14 +60,25 @@ class Client:
     def alive(self) -> bool:
         return False
 
+import wxpy
+class WxpyGroup(Group):
+    def __init__(wxbot, wxgroup):
+        pass
 class WxpyUser(User):
-    def __init__(self):
-        super(User, self).__init__()
+    def __init__(self, wxclient, wxbot, wxuser):
+        super(User, self).__init__(wxclient, wxuser.name, wxuser.wxid)
+        self._wxbot = wxbot
+        @self._wxbot.register(wxuser, wxpy.TEXT)
+        def raw_on_message(raw_message):
+            pass
+    @property
+    def alive(self) -> bool:
+        return self._wxbot.alive()
+   
 class WxpyClient(Client):
     def __init__(self):
-        impot wxpy
         super(Client, self).__init__()
-        wxbot=wxpy.Bot()
+        wxbot = wxpy.Bot()
         @wxbot.register(wxbot.groups(), wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
