@@ -96,7 +96,15 @@ class WxpyClient(Client):
                 user2wxmap[user] = puid
                 return user
         def user2wx(user : User) -> wxpy.User:
-            pass
+            puid = user2wxmap[user]
+            for friend in wxbot.friends():
+                if friend.puid == puid:
+                    return friend
+            for group in wxbot.groups():
+                for member in group.members:
+                    if member.puid == puid:
+                        return member
+            
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
