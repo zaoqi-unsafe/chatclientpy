@@ -19,6 +19,8 @@ class Group:
     @property
     def alive(self) -> bool:
         return self.client.alive
+    def send(self, message : Message) -> None:
+        self.client.send_group_message(self, message)
 class User:
     def __init__(self, client : Client, nick : str, id : str):
         self.client = client
@@ -39,6 +41,8 @@ class User:
     @property
     def alive(self) -> bool:
         return self.client.alive
+    def send(self, message : Message) -> None:
+        self.client.send_private_message(self, message)
 class Message:
     def __init__(self, message : str):
         self.message : str = message
@@ -75,26 +79,12 @@ class Client:
         return []
 
 import wxpy
-class WxpyGroup(Group):
-    def __init__(wxbot, wxgroup):
-        pass
-class WxpyUser(User):
-    def __init__(self, wxclient, wxbot, wxuser):
-        super(User, self).__init__(wxclient, wxuser.name, wxuser.wxid)
-        self._wxbot = wxbot
-        @self._wxbot.register(wxuser, wxpy.TEXT)
-        def raw_on_message(raw_message):
-            pass
-    @property
-    def alive(self) -> bool:
-        return self._wxbot.alive
-   
 class WxpyClient(Client):
     def __init__(self):
         super(Client, self).__init__()
         wxbot = wxpy.Bot()
-        @wxbot.register(wxbot.groups(), wxpy.TEXT)
+        @wxbot.register(wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
-            user = User(raw_message.member.name, raw_message.member.wxid)
-            #group#WIP
+            #user = User(raw_message.member.name, raw_message.member.wxid)
+            #WIP
