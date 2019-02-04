@@ -5,7 +5,7 @@ class Group:
         self.nick = nick
         self.id = id
         self._message_callbacks : List[Callable[[User, Message], None]] = []
-        @client.on_group_message
+        @client.on_group_message()
         def _handle_client_grpmsg(group : Group, sender : User, message : Message) -> None:
             if group == self:
                 self._do_on_message(sender, message)
@@ -27,7 +27,7 @@ class User:
         self.nick = nick
         self.id = id
         self._message_callbacks : List[Callable[[Message], None]] = []
-        @client.on_private_message
+        @client.on_private_message()
         def _handle_client_privmsg(sender : User, message : Message) -> None:
             if sender ==  self:
                 self._do_on_message(message)
