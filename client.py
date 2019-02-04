@@ -83,7 +83,7 @@ class WxpyClient(Client):
     def __init__(self):
         super(Client, self).__init__()
         wxbot = wxpy.Bot()
-        @wxbot.register(wxpy.TEXT)
+        @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
             #user = User(raw_message.member.name, raw_message.member.wxid)
