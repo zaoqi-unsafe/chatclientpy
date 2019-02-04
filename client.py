@@ -65,26 +65,30 @@ class Client:
         for callback in self._private_message_callbacks:
             callback(sender, message)
     def send_group_message(self, group : Group, message : Message) -> None:
-        pass
+        return self._send_group_message(group, message)
     def send_private_message(self, user : User, message : Message) -> None:
-        pass
+        return self._send_private_message(user, message)
     @property
     def alive(self) -> bool:
-        return False
+        return self._alive()
     @property
     def groups(self) -> List[Group]:
-        return []
+        return self._groups()
     @property
     def friends(self) -> List[User]:
-        return []
+        return self._friends()
 
 import wxpy
 class WxpyClient(Client):
     def __init__(self):
         super(Client, self).__init__()
         wxbot = wxpy.Bot()
+        wxbot.enable_puid()
+        usermap = {}
+        groupmap = {}
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
-            #user = User(raw_message.member.name, raw_message.member.wxid)
+            if message.chat == wxpy.Group:
+                #user = User(self, raw_message.member.name, raw_message.member.wxid)
             #WIP
