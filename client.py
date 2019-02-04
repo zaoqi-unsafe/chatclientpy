@@ -145,7 +145,7 @@ class WxpyClient(Client):
         self._groups = _groups
         def _friends():
             xs = []
-            for friend in wxbot.friends():
+            for friend in wxbot.friends()+wxbot.mps():
                 xs.append(wx2user(friend))
             return xs
         self._friends = _friends
