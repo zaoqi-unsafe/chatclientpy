@@ -110,12 +110,20 @@ class WxpyClient(Client):
             raise ValueError('not found')
         wx2groupmap : Mapping[str, Group] = {}
         group2wxmap : Mapping[Group, str] = {}
-        def wx2group(wxgroup : wxpy.Group):
+        def wx2group(wxgroup : wxpy.Group) -> Group:
             puid = wxgroup.puid
             if puid in wx2groupmap:
                 return wx2groupmap[puid]
             else:
-                pass
+                group = Group(self, wxgroup.name, wxgroup.puid)
+                wx2groupmap[puid] = group
+                group2wxmap[group] = puid
+        def group2wx(group : Group) -> wxpy.Group:
+            puid = group2wxmap[group]
+            for wxg in wxbot.groups():
+                if wxg.puid == puid:
+                    return wxg
+            raise ValueError('not found')
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
