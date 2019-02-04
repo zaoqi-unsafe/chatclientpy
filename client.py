@@ -127,7 +127,10 @@ class WxpyClient(Client):
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_message(raw_message):
             message = Message(raw_message.text)
-            if message.chat == wxpy.Group:
-                #user = User(self, raw_message.member.name, raw_message.member.wxid)
+            if isinstance(raw_message.chat, wxpy.Group):
                 user = wx2user(raw_message.member)
-                group = wx2group(raw_message.sender)
+                group = wx2group(raw_message.chat)
+                self._do_on_group_message(group, user, message)
+            else:
+                user = wx2user(raw_message.sender)
+                self._do_on_private_message(user, message)
