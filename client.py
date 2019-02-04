@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Mapping
 class Group:
     def __init__(self, client : Client, nick : str, id : str):
         self.client = client
@@ -84,8 +84,19 @@ class WxpyClient(Client):
         super(Client, self).__init__()
         wxbot = wxpy.Bot()
         wxbot.enable_puid()
-        usermap = {}
-        groupmap = {}
+        wx2usermap : Mapping[str, User] = {}
+        user2wxmap : Mapping[User, str] = {}
+        def wx2user(wxuser : wxpy.User) -> User:
+            puid = wxuser.puid
+            if puid in wx2usermap:
+                return wx2usermap[puid]
+            else:
+                user = User(self, wxuser.name, puid)
+                wx2usermap[puid] = user
+                user2wxmap[user] = puid
+                return user
+        def user2wx(user : User) -> wxpy.User:
+            pass
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
