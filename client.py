@@ -134,3 +134,18 @@ class WxpyClient(Client):
             else:
                 user = wx2user(raw_message.sender)
                 self._do_on_private_message(user, message)
+        def _alive():
+            return wxbot.alive
+        self._alive = _alive
+        def _groups():
+            xs = []
+            for group in wxbot.groups():
+                xs.append(wx2group(group))
+            return xs
+        self._groups = _groups
+        def _friends():
+            xs = []
+            for friend in wxbot.friends():
+                xs.append(wx2user(friend))
+            return xs
+        self._friends = _friends
