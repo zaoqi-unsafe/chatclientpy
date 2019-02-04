@@ -104,7 +104,9 @@ class WxpyClient(Client):
                 for member in group.members:
                     if member.puid == puid:
                         return member
-            
+            for mp in wxbot.mps():
+                if mp.puid == puid:
+                    return mp
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
