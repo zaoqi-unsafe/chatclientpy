@@ -149,3 +149,9 @@ class WxpyClient(Client):
                 xs.append(wx2user(friend))
             return xs
         self._friends = _friends
+        def _send_group_message(group : Group, message : Message) -> None:
+            group2wx(group).send(message.message)
+        self._send_group_message = _send_group_message
+        def _send_private_message(user : User, message : Message):
+            user2wx(user).send(message.message)
+        self._send_private_message = _send_private_message
