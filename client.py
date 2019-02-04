@@ -107,6 +107,15 @@ class WxpyClient(Client):
             for mp in wxbot.mps():
                 if mp.puid == puid:
                     return mp
+            raise ValueError('not found')
+        wx2groupmap : Mapping[str, Group] = {}
+        group2wxmap : Mapping[Group, str] = {}
+        def wx2group(wxgroup : wxpy.Group):
+            puid = wxgroup.puid
+            if puid in wx2groupmap:
+                return wx2groupmap[puid]
+            else:
+                pass
         @wxbot.register(msg_types=wxpy.TEXT)
         def raw_on_group_message(raw_message):
             message = Message(raw_message.text)
